@@ -60,5 +60,6 @@
 			android:configChanges="orientation"
 			android:launchMode="singleTask"
 			android:screenOrientation="portrait"/>
+		<activity android:name=".ui.SetActivity"></activity>
 	</application>
 </manifest>

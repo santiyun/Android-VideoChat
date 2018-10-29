@@ -24,6 +24,11 @@ android {
         }
     }
 
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -31,13 +36,15 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'com.jaeger.statusbarutil:library:1.4.0'
     implementation 'com.yanzhenjie:permission:2.0.0-rc1'
     implementation files('libs/bugly_crash_release.jar')
     implementation 'junit:junit:4.12'
-    implementation (name:'TTT_VIDEOSDK(0730)', ext:'aar')
+    implementation (name:'3T_Native_SDK_for_Android_V2.1.1_Full', ext:'aar')
+    implementation 'com.sospinner:sospinner:1.1.0'
+    //implementation project(':wstechapi')
 }

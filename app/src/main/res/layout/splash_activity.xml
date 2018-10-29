@@ -9,21 +9,35 @@
 	android:fitsSystemWindows="true"
 	tools:layout_editor_absoluteY="25dp">
 
-	<Button
-		android:id="@+id/enter"
-		android:layout_width="278dp"
-		android:layout_height="40dp"
-		android:layout_marginBottom="8dp"
+	<TextView
+		android:id="@+id/set"
+		android:layout_width="100dp"
+		android:layout_height="50dp"
 		android:layout_marginEnd="8dp"
 		android:layout_marginStart="8dp"
+		android:gravity="center"
+		android:inputType="textEmailAddress"
+		android:onClick="onSetButtonClick"
+		android:text="高级设置"
+		android:textColor="#FFFFFF"
+		android:textSize="12sp"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/enter" />
+
+	<Button
+		android:id="@+id/enter"
+		android:layout_width="0dp"
+		android:layout_height="40dp"
+		android:layout_marginBottom="8dp"
 		android:layout_marginTop="8dp"
 		android:background="@drawable/login_enter"
 		android:onClick="onClickEnterButton"
 		android:text="@string/welcome_gointo"
 		android:textColor="#FFFFFF"
 		app:layout_constraintBottom_toTopOf="@+id/version"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintEnd_toEndOf="@+id/room_id"
+		app:layout_constraintStart_toStartOf="@+id/room_id_text"
 		app:layout_constraintTop_toBottomOf="@+id/room_id"
 		app:layout_constraintVertical_bias="0.6" />
 
@@ -63,7 +77,7 @@
 		android:layout_marginTop="70dp"
 		android:background="@drawable/login_edit"
 		android:ems="10"
-		android:hint="请输入直播间ID"
+		android:hint="请输入19位以内的房间ID"
 		android:inputType="number"
 		android:paddingLeft="12dp"
 		android:textColor="#0FFFF1"

@@ -44,7 +44,7 @@ import static com.tttrtclive.LocalConstans.CALL_BACK_ON_USER_ROLE_CHANGED;
 
 public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
 
-    public static final String TAG = "MyTTTRtcEngineEventHandlerMM";
+    public static final String TAG = "MyTTTRtcEngineEventHandlerMMVIDEO";
     public static final String MSG_TAG = "MyTTTRtcEngineEventHandlerMSGMM";
     private boolean mIsSaveCallBack;
     private List<JniObjs> mSaveCallBack;
@@ -254,11 +254,6 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     }
 
     @Override
-    public void onSpeechRecognized(String str) {
-
-    }
-
-    @Override
     public void onAudioRouteChanged(int routing) {
         MyLog.i("wzg", "onAudioRouteChanged.... routing : " + routing);
         MainActivity.mCurrentAudioRoute = routing;
@@ -275,12 +270,6 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     @Override
     public void onLeaveChannel(RtcStats stats) {
         MyLog.i("wzg", "onLeaveChannel....");
-    }
-
-    @Override
-    public void onRemoteVideoDecoded(long uid, ConfVideoFrame mFrame) {
-//        MyLog.i("wzg", "onRemoteVideoDecoded.... uid : " + uid + " | width : " + mFrame.stride
-//                + " | height : " + mFrame.height);
     }
 
     @Override
