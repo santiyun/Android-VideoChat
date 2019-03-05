@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
 
 import com.tttrtclive.R;
 import com.tttrtclive.bean.VideoProfileManager;
@@ -22,7 +21,7 @@ public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelecte
     private VideoProfileManager.VideoProfile mVideoProfile;
 
     /*-------------------------------配置参数---------------------------------*/
-    public int mLocalVideoProfile = Constants.VIDEO_PROFILE_DEFAULT;
+    public int mLocalVideoProfile = Constants.TTTRTC_VIDEOPROFILE_DEFAULT;
     private int mFRate;
     private int mBTate;
     private int mWidth, mHeight;
@@ -72,14 +71,14 @@ public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelecte
     @Override
     public void onClick(View v) {
         if (mLocalVideoProfile != 0) {
-            TTTRtcEngine.getInstance().setVideoProfile(mVideoProfile.videoProfile, true);
+            TTTRtcEngine.getInstance().setVideoProfile(mVideoProfile.videoProfile, false);
         } else {
             String[] wh = mPixView.getText().toString().trim().split("x");
             mWidth = Integer.parseInt(wh[0]);
             mHeight = Integer.parseInt(wh[1]);
             mFRate = Integer.parseInt(mFrameView.getText().toString().trim());
             mBTate = Integer.parseInt(mBiteView.getText().toString().trim());
-            TTTRtcEngine.getInstance().setVideoProfile(mWidth, mHeight, mFRate, mBTate);
+            TTTRtcEngine.getInstance().setVideoProfile(mHeight, mWidth, mFRate, mBTate);
         }
         TTTRtcEngine.getInstance().setHighQualityAudioParameters(mUseHQAudio);
         exit();

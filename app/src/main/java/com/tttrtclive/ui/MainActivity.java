@@ -86,9 +86,9 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initView() {
-        mAudioSpeedShow = (TextView) findViewById(R.id.main_btn_audioup);
-        mVideoSpeedShow = (TextView) findViewById(R.id.main_btn_videoup);
-        mAudioChannel = (ImageView) findViewById(R.id.main_btn_audio_channel);
+        mAudioSpeedShow = findViewById(R.id.main_btn_audioup);
+        mVideoSpeedShow = findViewById(R.id.main_btn_videoup);
+        mAudioChannel = findViewById(R.id.main_btn_audio_channel);
 
         Intent intent = getIntent();
         long roomId = intent.getLongExtra("ROOM_ID", 0);
@@ -173,8 +173,8 @@ public class MainActivity extends BaseActivity {
             if (MyTTTRtcEngineEventHandler.TAG.equals(action)) {
                 JniObjs mJniObjs = intent.getParcelableExtra(MyTTTRtcEngineEventHandler.MSG_TAG);
                 switch (mJniObjs.mJniType) {
-                    case LocalConstans.CALL_BACK_ON_ERROR:
-                        MyLog.d("UI onReceive CALL_BACK_ON_ERROR... ");
+                    case LocalConstans.CALL_BACK_ON_USER_KICK:
+                        MyLog.d("UI onReceive CALL_BACK_ON_USER_KICK... ");
                         String message = "";
                         int errorType = mJniObjs.mErrorType;
                         if (errorType == Constants.ERROR_KICK_BY_HOST) {

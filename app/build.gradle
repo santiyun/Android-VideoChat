@@ -8,7 +8,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 27
         versionCode 1
-        versionName "2.1.0 (0730)"
+        versionName "2.0.1"
     }
 
     repositories {
@@ -33,6 +33,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+            assets.srcDirs = ['assets']
+        }
+        release.setRoot('build-types/release')
+    }
 }
 
 dependencies {
@@ -42,9 +49,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.yanzhenjie:permission:2.0.0-rc1'
-    implementation files('libs/bugly_crash_release.jar')
     implementation 'junit:junit:4.12'
-    implementation (name:'3T_Native_SDK_for_Android_V2.1.1_Full', ext:'aar')
     implementation 'com.sospinner:sospinner:1.1.0'
-    //implementation project(':wstechapi')
+    implementation(name: <SDK引用位置>, ext: 'aar')
 }

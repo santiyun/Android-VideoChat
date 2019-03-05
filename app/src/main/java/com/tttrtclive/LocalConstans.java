@@ -28,4 +28,5 @@ public class LocalConstans {
     public static final int CALL_BACK_ON_AUDIO_ROUTE = 17;
     public static final int CALL_BACK_ON_SPEAK_MUTE_AUDIO = 18;
     public static final int CALL_BACK_ON_USER_ROLE_CHANGED = 19;
+    public static final int CALL_BACK_ON_USER_KICK = 20;
 }
