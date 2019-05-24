@@ -88,12 +88,20 @@ public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelecte
 
             try {
                 mWidth = Integer.parseInt(wh[0]);
+                if (mWidth <= 0) {
+                    Toast.makeText(this, "自定义视频分辨率宽必须大于0", Toast.LENGTH_SHORT).show();
+                    return ;
+                }
             } catch (Exception e) {
                 Toast.makeText(this, "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
                 return;
             }
             try {
                 mHeight = Integer.parseInt(wh[1]);
+                if (mHeight <= 0) {
+                    Toast.makeText(this, "自定义视频分辨率高必须大于0", Toast.LENGTH_SHORT).show();
+                    return ;
+                }
             } catch (Exception e) {
                 Toast.makeText(this, "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
                 return;
@@ -104,12 +112,21 @@ public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelecte
                 return;
             }
             mFRate = Integer.parseInt(mFrameView.getText().toString().trim());
+            if (mFRate <= 0) {
+                Toast.makeText(this, "自定义视频帧率必须大于0", Toast.LENGTH_SHORT).show();
+                return ;
+            }
 
             if (mBiteView.getText() == null || TextUtils.isEmpty(mBiteView.getText().toString())) {
                 Toast.makeText(this, "自定义视频码率不能为空", Toast.LENGTH_SHORT).show();
                 return;
             }
             mBTate = Integer.parseInt(mBiteView.getText().toString().trim());
+            if (mBTate <= 0) {
+                Toast.makeText(this, "自定义视频码率必须大于0", Toast.LENGTH_SHORT).show();
+                return ;
+            }
+
             TTTRtcEngine.getInstance().setVideoProfile(mHeight, mWidth, mFRate, mBTate);
         }
         TTTRtcEngine.getInstance().setHighQualityAudioParameters(mUseHQAudio);
