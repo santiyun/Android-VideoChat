@@ -8,11 +8,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.SurfaceView;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -81,6 +81,7 @@ public class MainActivity extends BaseActivity {
             mTelephonyManager = null;
         }
         unregisterReceiver(mLocalBroadcast);
+        mTTTEngine.muteLocalAudioStream(false);
         super.onDestroy();
         MyLog.d("MainActivity onDestroy");
     }
@@ -93,12 +94,13 @@ public class MainActivity extends BaseActivity {
         Intent intent = getIntent();
         long roomId = intent.getLongExtra("ROOM_ID", 0);
         mUserId = intent.getLongExtra("USER_ID", 0);
-        ((TextView) findViewById(R.id.main_btn_title)).setText("房号：" + roomId);
+        String localChannelName = getString(R.string.ttt_prefix_channel_name) + ":" + roomId;
+        ((TextView) findViewById(R.id.main_btn_title)).setText(localChannelName);
         ((TextView) findViewById(R.id.main_btn_host)).setText("ID：" + mUserId);
 
         SurfaceView mSurfaceView = mTTTEngine.CreateRendererView(this);
         mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN, mSurfaceView), getRequestedOrientation());
-        ((ConstraintLayout)findViewById(R.id.local_view_layout)).addView(mSurfaceView);
+        ((ViewGroup) findViewById(R.id.local_view_layout)).addView(mSurfaceView);
 
         findViewById(R.id.main_btn_exit).setOnClickListener((v) -> mExitRoomDialog.show());
 
@@ -125,8 +127,6 @@ public class MainActivity extends BaseActivity {
     private void initEngine() {
         mLocalBroadcast = new MyLocalBroadcastReceiver();
         IntentFilter filter = new IntentFilter();
-        filter.addCategory("ttt.test.interface");
-        filter.addAction("ttt.test.interface.string");
         filter.addAction(MyTTTRtcEngineEventHandler.TAG);
         registerReceiver(mLocalBroadcast, filter);
         ((MainApplication) getApplicationContext()).mMyTTTRtcEngineEventHandler.setIsSaveCallBack(false);
@@ -165,6 +165,21 @@ public class MainActivity extends BaseActivity {
         finish();
     }
 
+    /**
+     * Author: wangzg <br/>
+     * Time: 2017-11-21 18:08:37<br/>
+     * Description: 显示因错误的回调而退出的对话框
+     *
+     * @param message the message 错误的原因
+     */
+    public void showErrorExitDialog(String message) {
+        if (!TextUtils.isEmpty(message)) {
+            String msg = getString(R.string.ttt_error_exit_dialog_prefix_msg) + ": " + message;
+            mErrorExitDialog.setMessage(msg);//设置显示的内容
+            mErrorExitDialog.show();
+        }
+    }
+
     private class MyLocalBroadcastReceiver extends BroadcastReceiver {
 
         @Override
@@ -178,31 +193,29 @@ public class MainActivity extends BaseActivity {
                         String message = "";
                         int errorType = mJniObjs.mErrorType;
                         if (errorType == Constants.ERROR_KICK_BY_HOST) {
-                            message = getResources().getString(R.string.error_kicked);
+                            message = getResources().getString(R.string.ttt_error_exit_kicked);
                         } else if (errorType == Constants.ERROR_KICK_BY_PUSHRTMPFAILED) {
-                            message = getResources().getString(R.string.error_rtmp);
+                            message = getResources().getString(R.string.ttt_error_exit_push_rtmp_failed);
                         } else if (errorType == Constants.ERROR_KICK_BY_SERVEROVERLOAD) {
-                            message = getResources().getString(R.string.error_server_overload);
+                            message = getResources().getString(R.string.ttt_error_exit_server_overload);
                         } else if (errorType == Constants.ERROR_KICK_BY_MASTER_EXIT) {
-                            message = getResources().getString(R.string.error_anchorexited);
+                            message = getResources().getString(R.string.ttt_error_exit_anchor_exited);
                         } else if (errorType == Constants.ERROR_KICK_BY_RELOGIN) {
-                            message = getResources().getString(R.string.error_relogin);
+                            message = getResources().getString(R.string.ttt_error_exit_relogin);
                         } else if (errorType == Constants.ERROR_KICK_BY_NEWCHAIRENTER) {
-                            message = getResources().getString(R.string.error_otherenter);
+                            message = getResources().getString(R.string.ttt_error_exit_other_anchor_enter);
                         } else if (errorType == Constants.ERROR_KICK_BY_NOAUDIODATA) {
-                            message = getResources().getString(R.string.error_noaudio);
+                            message = getResources().getString(R.string.ttt_error_exit_noaudio_upload);
                         } else if (errorType == Constants.ERROR_KICK_BY_NOVIDEODATA) {
-                            message = getResources().getString(R.string.error_novideo);
+                            message = getResources().getString(R.string.ttt_error_exit_novideo_upload);
+                        } else if (errorType == Constants.ERROR_TOKEN_EXPIRED) {
+                            message = getResources().getString(R.string.ttt_error_exit_token_expired);
                         }
 
-                        if (!TextUtils.isEmpty(message)) {
-                            mErrorExitDialog.setMessage("退出原因: " + message);//设置显示的内容
-                            mErrorExitDialog.show();
-                        }
+                        showErrorExitDialog(message);
                         break;
                     case LocalConstans.CALL_BACK_ON_CONNECTLOST:
-                        mErrorExitDialog.setMessage("退出原因: 房间网络断开");//设置显示的内容
-                        mErrorExitDialog.show();
+                        showErrorExitDialog(getString(R.string.ttt_error_network_disconnected));
                         break;
                     case LocalConstans.CALL_BACK_ON_USER_JOIN:
                         long uid = mJniObjs.mUid;
@@ -215,20 +228,20 @@ public class MainActivity extends BaseActivity {
                         mRemoteManager.remove(offLineUserID);
                         break;
                     case LocalConstans.CALL_BACK_ON_REMOTE_AUDIO_STATE:
-                        String audioString = getResources().getString(R.string.videoly_audiodown);
+                        String audioString = getResources().getString(R.string.ttt_audio_downspeed);
                         String audioResult = String.format(audioString, String.valueOf(mJniObjs.mRemoteAudioStats.getReceivedBitrate()));
                         mRemoteManager.updateAudioBitrate(mJniObjs.mRemoteAudioStats.getUid(), audioResult);
                         break;
                     case LocalConstans.CALL_BACK_ON_REMOTE_VIDEO_STATE:
-                        String videoString = getResources().getString(R.string.videoly_videodown);
+                        String videoString = getResources().getString(R.string.ttt_video_downspeed);
                         String videoResult = String.format(videoString, String.valueOf(mJniObjs.mRemoteVideoStats.getReceivedBitrate()));
                         mRemoteManager.updateVideoBitrate(mJniObjs.mRemoteVideoStats.getUid(), videoResult);
                         break;
                     case LocalConstans.CALL_BACK_ON_LOCAL_AUDIO_STATE:
-                        setTextViewContent(mAudioSpeedShow, R.string.main_audioup, String.valueOf(mJniObjs.mLocalAudioStats.getSentBitrate()));
+                        setTextViewContent(mAudioSpeedShow, R.string.ttt_audio_upspeed, String.valueOf(mJniObjs.mLocalAudioStats.getSentBitrate()));
                         break;
                     case LocalConstans.CALL_BACK_ON_LOCAL_VIDEO_STATE:
-                        setTextViewContent(mVideoSpeedShow, R.string.main_videoups, String.valueOf(mJniObjs.mLocalVideoStats.getSentBitrate()));
+                        setTextViewContent(mVideoSpeedShow, R.string.ttt_video_upspeed, String.valueOf(mJniObjs.mLocalVideoStats.getSentBitrate()));
                         break;
                     case LocalConstans.CALL_BACK_ON_MUTE_AUDIO:
                         long muteUid = mJniObjs.mUid;
@@ -240,7 +253,7 @@ public class MainActivity extends BaseActivity {
 
                     case LocalConstans.CALL_BACK_ON_AUDIO_ROUTE:
                         int mAudioRoute = mJniObjs.mAudioRoute;
-                        if (mAudioRoute == Constants.AUDIO_ROUTE_SPEAKER || mAudioRoute ==  Constants.AUDIO_ROUTE_HEADPHONE) {
+                        if (mAudioRoute == Constants.AUDIO_ROUTE_SPEAKER || mAudioRoute == Constants.AUDIO_ROUTE_HEADPHONE) {
                             mIsHeadset = false;
                             mAudioChannel.setImageResource(mIsMute ? R.drawable.mainly_btn_mute_speaker_selector : R.drawable.mainly_btn_speaker_selector);
                         } else {

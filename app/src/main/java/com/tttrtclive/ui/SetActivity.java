@@ -2,10 +2,12 @@ package com.tttrtclive.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.tttrtclive.R;
 import com.tttrtclive.bean.VideoProfileManager;
@@ -73,10 +75,29 @@ public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelecte
         if (mLocalVideoProfile != 0) {
             TTTRtcEngine.getInstance().setVideoProfile(mVideoProfile.videoProfile, false);
         } else {
+            if (mPixView.getText() == null || TextUtils.isEmpty(mPixView.getText().toString())) {
+                Toast.makeText(this, "自定义视频分辨率不能为空", Toast.LENGTH_SHORT).show();
+                return ;
+            }
+
             String[] wh = mPixView.getText().toString().trim().split("x");
+            if (wh.length != 2) {
+                Toast.makeText(this, "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
+                return ;
+            }
             mWidth = Integer.parseInt(wh[0]);
             mHeight = Integer.parseInt(wh[1]);
+
+            if (mFrameView.getText() == null || TextUtils.isEmpty(mFrameView.getText().toString())) {
+                Toast.makeText(this, "自定义视频帧率不能为空", Toast.LENGTH_SHORT).show();
+                return ;
+            }
             mFRate = Integer.parseInt(mFrameView.getText().toString().trim());
+
+            if (mBiteView.getText() == null || TextUtils.isEmpty(mBiteView.getText().toString())) {
+                Toast.makeText(this, "自定义视频码率不能为空", Toast.LENGTH_SHORT).show();
+                return ;
+            }
             mBTate = Integer.parseInt(mBiteView.getText().toString().trim());
             TTTRtcEngine.getInstance().setVideoProfile(mHeight, mWidth, mFRate, mBTate);
         }

@@ -1,11 +1,11 @@
 package com.tttrtclive.Helper;
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,13 +28,13 @@ public class AudioRemoteWindow extends RelativeLayout {
     private TextView mIdView;
     private TextView mAudioBitrate;
     private TextView mVideoBitrate;
-    private ConstraintLayout mVideoLayout;
+    private ViewGroup mVideoLayout;
 
     public AudioRemoteWindow(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
 
-        View v = LayoutInflater.from(context).inflate(R.layout.audio_remote_window,this, true);
+        View v = LayoutInflater.from(context).inflate(R.layout.audio_remote_window, this, true);
         mSpeakImage = v.findViewById(R.id.speakimage);
         mIdView = v.findViewById(R.id.id);
         mAudioBitrate = v.findViewById(R.id.audiorate);
@@ -46,7 +46,7 @@ public class AudioRemoteWindow extends RelativeLayout {
 
     public void show(EnterUserInfo userInfo) {
         mId = userInfo.getId();
-        mIdView.setText("" + mId);
+        mIdView.setText(String.valueOf(mId));
         mSpeakImage.setVisibility(View.VISIBLE);
         mIdView.setVisibility(View.VISIBLE);
         mAudioBitrate.setVisibility(View.VISIBLE);
@@ -60,6 +60,7 @@ public class AudioRemoteWindow extends RelativeLayout {
 
     public void hide() {
         mId = -1;
+        mSpeakImage.setImageResource(R.drawable.mainly_btn_speaker_selector);
         mSpeakImage.setVisibility(View.INVISIBLE);
         mIdView.setVisibility(View.INVISIBLE);
         mAudioBitrate.setVisibility(View.INVISIBLE);

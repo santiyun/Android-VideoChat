@@ -11,12 +11,12 @@ public class RemoteManager {
     private ArrayList<AudioRemoteWindow> mRemoteWindowList = new ArrayList();
 
     public RemoteManager(MainActivity mainActivity) {
-        mRemoteWindowList.add((AudioRemoteWindow) mainActivity.findViewById(R.id.remote1));
-        mRemoteWindowList.add((AudioRemoteWindow) mainActivity.findViewById(R.id.remote2));
-        mRemoteWindowList.add((AudioRemoteWindow) mainActivity.findViewById(R.id.remote3));
-        mRemoteWindowList.add((AudioRemoteWindow) mainActivity.findViewById(R.id.remote4));
-        mRemoteWindowList.add((AudioRemoteWindow) mainActivity.findViewById(R.id.remote5));
-        mRemoteWindowList.add((AudioRemoteWindow) mainActivity.findViewById(R.id.remote6));
+        mRemoteWindowList.add(mainActivity.findViewById(R.id.remote1));
+        mRemoteWindowList.add(mainActivity.findViewById(R.id.remote2));
+        mRemoteWindowList.add(mainActivity.findViewById(R.id.remote3));
+        mRemoteWindowList.add(mainActivity.findViewById(R.id.remote4));
+        mRemoteWindowList.add(mainActivity.findViewById(R.id.remote5));
+        mRemoteWindowList.add(mainActivity.findViewById(R.id.remote6));
     }
 
     public void add(EnterUserInfo userInfo) {
