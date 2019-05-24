@@ -16,7 +16,7 @@ import com.wushuangtech.wstechapi.TTTRtcEngine;
 
 import so.library.SoSpinner;
 
-public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelectedListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener{
+public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelectedListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private VideoProfileManager mVideoProfileManager = new VideoProfileManager();
     private EditText mPixView, mBiteView, mFrameView;
@@ -77,26 +77,37 @@ public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelecte
         } else {
             if (mPixView.getText() == null || TextUtils.isEmpty(mPixView.getText().toString())) {
                 Toast.makeText(this, "自定义视频分辨率不能为空", Toast.LENGTH_SHORT).show();
-                return ;
+                return;
             }
 
             String[] wh = mPixView.getText().toString().trim().split("x");
             if (wh.length != 2) {
                 Toast.makeText(this, "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
-                return ;
+                return;
             }
-            mWidth = Integer.parseInt(wh[0]);
-            mHeight = Integer.parseInt(wh[1]);
+
+            try {
+                mWidth = Integer.parseInt(wh[0]);
+            } catch (Exception e) {
+                Toast.makeText(this, "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            try {
+                mHeight = Integer.parseInt(wh[1]);
+            } catch (Exception e) {
+                Toast.makeText(this, "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             if (mFrameView.getText() == null || TextUtils.isEmpty(mFrameView.getText().toString())) {
                 Toast.makeText(this, "自定义视频帧率不能为空", Toast.LENGTH_SHORT).show();
-                return ;
+                return;
             }
             mFRate = Integer.parseInt(mFrameView.getText().toString().trim());
 
             if (mBiteView.getText() == null || TextUtils.isEmpty(mBiteView.getText().toString())) {
                 Toast.makeText(this, "自定义视频码率不能为空", Toast.LENGTH_SHORT).show();
-                return ;
+                return;
             }
             mBTate = Integer.parseInt(mBiteView.getText().toString().trim());
             TTTRtcEngine.getInstance().setVideoProfile(mHeight, mWidth, mFRate, mBTate);
