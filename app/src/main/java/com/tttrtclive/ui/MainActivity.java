@@ -267,14 +267,25 @@ public class MainActivity extends BaseActivity {
                         if (mIsSpeaker) {
                             mTTTEngine.setEnableSpeakerphone(false);
                         }
+
+                        if (!mIsMute) {
+                            mTTTEngine.muteLocalAudioStream(true);
+                        }
+                        mTTTEngine.muteAllRemoteAudioStreams(true);
                         break;
                     case LocalConstans.CALL_BACK_ON_PHONE_LISTENER_IDLE:
                         if (mIsPhoneComing) {
                             if (mIsSpeaker) {
                                 mTTTEngine.setEnableSpeakerphone(true);
                             }
+
+                            if (!mIsMute) {
+                                mTTTEngine.muteLocalAudioStream(false);
+                            }
+                            mTTTEngine.muteAllRemoteAudioStreams(false);
                             mIsPhoneComing = false;
                         }
+                        break;
                     case LocalConstans.CALL_BACK_ON_AUDIO_VOLUME_INDICATION:
                         if (mIsMute) return;
                         int volumeLevel = mJniObjs.mAudioLevel;
