@@ -2,11 +2,12 @@ package com.tttrtclive.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
 import com.wushuangtech.wstechapi.TTTRtcEngine;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by wangzhiguo on 17/10/12.

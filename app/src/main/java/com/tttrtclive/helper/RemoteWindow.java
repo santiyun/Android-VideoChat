@@ -16,7 +16,7 @@ import com.wushuangtech.library.Constants;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 import com.wushuangtech.wstechapi.model.VideoCanvas;
 
-public class AudioRemoteWindow extends RelativeLayout {
+public class RemoteWindow extends RelativeLayout {
 
     private TTTRtcEngine mTTTEngine;
     private Context mContext;
@@ -30,7 +30,7 @@ public class AudioRemoteWindow extends RelativeLayout {
     private TextView mVideoBitrate;
     private ViewGroup mVideoLayout;
 
-    public AudioRemoteWindow(Context context, AttributeSet attrs) {
+    public RemoteWindow(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
 
