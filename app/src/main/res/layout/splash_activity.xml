@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-											 xmlns:app="http://schemas.android.com/apk/res-auto"
-											 xmlns:tools="http://schemas.android.com/tools"
-											 android:layout_width="match_parent"
-											 android:layout_height="match_parent"
-											 android:background="@drawable/login"
-											 android:clipToPadding="true"
-											 android:fitsSystemWindows="true"
-											 tools:layout_editor_absoluteY="25dp">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@drawable/login"
+	android:clipToPadding="true"
+	android:fitsSystemWindows="true"
+	tools:layout_editor_absoluteY="25dp">
 
 	<TextView
 		android:id="@+id/set"
 		android:layout_width="100dp"
 		android:layout_height="50dp"
-		android:layout_marginEnd="8dp"
 		android:layout_marginStart="8dp"
+		android:layout_marginEnd="8dp"
 		android:gravity="center"
 		android:inputType="textEmailAddress"
 		android:onClick="onSetButtonClick"
@@ -23,14 +23,14 @@
 		android:textSize="12sp"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/enter"/>
+		app:layout_constraintTop_toBottomOf="@+id/enter" />
 
 	<Button
 		android:id="@+id/enter"
 		android:layout_width="0dp"
 		android:layout_height="40dp"
-		android:layout_marginBottom="8dp"
 		android:layout_marginTop="8dp"
+		android:layout_marginBottom="8dp"
 		android:background="@drawable/login_enter"
 		android:onClick="onClickEnterButton"
 		android:text="@string/ttt_enter_channel"
@@ -39,19 +39,19 @@
 		app:layout_constraintEnd_toEndOf="@+id/room_id"
 		app:layout_constraintStart_toStartOf="@+id/room_id_text"
 		app:layout_constraintTop_toBottomOf="@+id/room_id"
-		app:layout_constraintVertical_bias="0.6"/>
+		app:layout_constraintVertical_bias="0.6" />
 
 	<ImageView
 		android:id="@+id/imageView2"
 		android:layout_width="142dp"
 		android:layout_height="27dp"
-		android:layout_marginEnd="8dp"
 		android:layout_marginStart="8dp"
 		android:layout_marginTop="90dp"
+		android:layout_marginEnd="8dp"
 		android:background="@drawable/logo"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"/>
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<TextView
 		android:id="@+id/room_id_text"
@@ -67,7 +67,7 @@
 		app:layout_constraintHorizontal_bias="0.5"
 		app:layout_constraintHorizontal_chainStyle="packed"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="@+id/room_id"/>
+		app:layout_constraintTop_toTopOf="@+id/room_id" />
 
 	<EditText
 		android:id="@+id/room_id"
@@ -85,47 +85,47 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.5"
 		app:layout_constraintStart_toEndOf="@+id/room_id_text"
-		app:layout_constraintTop_toBottomOf="@+id/imageView2"/>
+		app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
 	<Button
 		android:id="@+id/button"
 		android:layout_width="76dp"
 		android:layout_height="33dp"
-		android:layout_marginEnd="8dp"
 		android:layout_marginTop="8dp"
+		android:layout_marginEnd="8dp"
 		android:background="@drawable/login_enter"
 		android:onClick="onTestButtonClick"
 		android:text="测试"
 		android:textColor="#FFFFFF"
 		android:visibility="gone"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintTop_toTopOf="parent"/>
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<TextView
 		android:id="@+id/company"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginBottom="8dp"
-		android:layout_marginEnd="8dp"
 		android:layout_marginStart="8dp"
+		android:layout_marginEnd="8dp"
+		android:layout_marginBottom="8dp"
 		android:text="@string/app_name"
 		android:textColor="#FFFFFF"
 		android:textSize="15sp"
 		app:layout_constraintBottom_toTopOf="@+id/version"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"/>
+		app:layout_constraintStart_toStartOf="parent" />
 
 	<TextView
 		android:id="@+id/version"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginBottom="16dp"
-		android:layout_marginEnd="8dp"
 		android:layout_marginStart="8dp"
+		android:layout_marginEnd="8dp"
+		android:layout_marginBottom="16dp"
 		android:text="@string/version_info"
 		android:textColor="#FFFFFF"
 		android:textSize="10sp"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"/>
-</android.support.constraint.ConstraintLayout>
+		app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

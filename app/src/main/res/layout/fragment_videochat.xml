@@ -1,47 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/main_background"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/local_view_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/local_view_layout"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
 
-    </android.support.constraint.ConstraintLayout>
-
-    <ImageView
+	<ImageView
 		android:id="@+id/imageView6"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="@drawable/dingbuyinying" />
 
-    <ImageView
-        android:id="@+id/main_btn_audio_channel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:src="@drawable/mianti"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_btn_switch_camera" />
+	<ImageView
+		android:id="@+id/main_btn_audio_channel"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="8dp"
+		android:layout_marginTop="8dp"
+		android:src="@drawable/mianti"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/main_btn_switch_camera" />
 
-    <ImageView
-        android:id="@+id/main_btn_switch_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/mainly_btn_camera_selector"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+	<ImageView
+		android:id="@+id/main_btn_switch_camera"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="8dp"
+		android:layout_marginTop="16dp"
+		android:src="@drawable/mainly_btn_camera_selector"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<TextView
 		android:id="@+id/main_btn_title"
@@ -97,8 +94,8 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentRight="true"
-		android:layout_marginEnd="16dp"
 		android:layout_marginTop="16dp"
+		android:layout_marginEnd="16dp"
 		android:paddingTop="6dp"
 		android:src="@drawable/mainly_btn_exit_selector"
 		app:layout_constraintEnd_toEndOf="parent"
@@ -122,7 +119,7 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="@+id/remote2" />
 
-	<com.tttrtclive.Helper.AudioRemoteWindow
+	<com.tttrtclive.helper.RemoteWindow
 		android:id="@+id/remote1"
 		android:layout_width="0dp"
 		android:layout_height="0dp"
@@ -131,11 +128,9 @@
 		app:layout_constraintDimensionRatio="3:4"
 		app:layout_constraintEnd_toStartOf="@+id/remote2"
 		app:layout_constraintHorizontal_bias="0.5"
-		app:layout_constraintStart_toStartOf="parent">
+		app:layout_constraintStart_toStartOf="parent"></com.tttrtclive.helper.RemoteWindow>
 
-	</com.tttrtclive.Helper.AudioRemoteWindow>
-
-	<com.tttrtclive.Helper.AudioRemoteWindow
+	<com.tttrtclive.helper.RemoteWindow
 		android:id="@+id/remote2"
 		android:layout_width="0dp"
 		android:layout_height="0dp"
@@ -144,11 +139,9 @@
 		app:layout_constraintDimensionRatio="3:4"
 		app:layout_constraintEnd_toStartOf="@+id/remote3"
 		app:layout_constraintHorizontal_bias="0.5"
-		app:layout_constraintStart_toEndOf="@+id/remote1">
+		app:layout_constraintStart_toEndOf="@+id/remote1"></com.tttrtclive.helper.RemoteWindow>
 
-	</com.tttrtclive.Helper.AudioRemoteWindow>
-
-	<com.tttrtclive.Helper.AudioRemoteWindow
+	<com.tttrtclive.helper.RemoteWindow
 		android:id="@+id/remote3"
 		android:layout_width="0dp"
 		android:layout_height="0dp"
@@ -157,9 +150,7 @@
 		app:layout_constraintDimensionRatio="3:4"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.5"
-		app:layout_constraintStart_toEndOf="@+id/remote2">
-
-	</com.tttrtclive.Helper.AudioRemoteWindow>
+		app:layout_constraintStart_toEndOf="@+id/remote2"></com.tttrtclive.helper.RemoteWindow>
 
 	<ImageView
 		android:id="@+id/imageView4"
@@ -179,7 +170,7 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="@+id/remote5" />
 
-	<com.tttrtclive.Helper.AudioRemoteWindow
+	<com.tttrtclive.helper.RemoteWindow
 		android:id="@+id/remote4"
 		android:layout_width="0dp"
 		android:layout_height="0dp"
@@ -188,11 +179,9 @@
 		app:layout_constraintDimensionRatio="3:4"
 		app:layout_constraintEnd_toStartOf="@+id/remote5"
 		app:layout_constraintHorizontal_bias="0.5"
-		app:layout_constraintStart_toStartOf="parent">
+		app:layout_constraintStart_toStartOf="parent"></com.tttrtclive.helper.RemoteWindow>
 
-	</com.tttrtclive.Helper.AudioRemoteWindow>
-
-	<com.tttrtclive.Helper.AudioRemoteWindow
+	<com.tttrtclive.helper.RemoteWindow
 		android:id="@+id/remote5"
 		android:layout_width="0dp"
 		android:layout_height="0dp"
@@ -201,11 +190,9 @@
 		app:layout_constraintDimensionRatio="3:4"
 		app:layout_constraintEnd_toStartOf="@+id/remote6"
 		app:layout_constraintHorizontal_bias="0.5"
-		app:layout_constraintStart_toEndOf="@+id/remote4">
+		app:layout_constraintStart_toEndOf="@+id/remote4"></com.tttrtclive.helper.RemoteWindow>
 
-	</com.tttrtclive.Helper.AudioRemoteWindow>
-
-	<com.tttrtclive.Helper.AudioRemoteWindow
+	<com.tttrtclive.helper.RemoteWindow
 		android:id="@+id/remote6"
 		android:layout_width="0dp"
 		android:layout_height="0dp"
@@ -214,8 +201,5 @@
 		app:layout_constraintDimensionRatio="3:4"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.5"
-		app:layout_constraintStart_toEndOf="@+id/remote5">
-
-	</com.tttrtclive.Helper.AudioRemoteWindow>
-
-</android.support.constraint.ConstraintLayout>
+		app:layout_constraintStart_toEndOf="@+id/remote5"></com.tttrtclive.helper.RemoteWindow>
+</androidx.constraintlayout.widget.ConstraintLayout>

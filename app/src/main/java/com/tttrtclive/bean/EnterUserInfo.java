@@ -1,6 +1,5 @@
 package com.tttrtclive.bean;
 
-import android.support.annotation.NonNull;
 
 /**
  * Created by root on 17-2-21.

@@ -2,11 +2,12 @@ package com.tttrtclive.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.StyleRes;
 import android.view.View;
 
 import com.tttrtclive.R;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
 
 /**
  * Created by wangzhiguo on 17/10/23.

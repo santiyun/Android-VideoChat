@@ -1,4 +1,4 @@
-package com.tttrtclive.Helper;
+package com.tttrtclive.helper;
 
 import android.content.Context;
 import android.util.AttributeSet;
