@@ -104,25 +104,31 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        mMyPermissionManager.clearResource();
+        if (mMyPermissionManager != null) {
+            mMyPermissionManager.clearResource();
+        }
         super.onDestroy();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        boolean isOk = mMyPermissionManager.onRequestPermissionsResults(this, requestCode, permissions, grantResults);
-        if (isOk) {
-            init();
+        if (mMyPermissionManager != null) {
+            boolean isOk = mMyPermissionManager.onRequestPermissionsResults(this, requestCode, permissions, grantResults);
+            if (isOk) {
+                init();
+            }
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        boolean isOk = mMyPermissionManager.onActivityResults(requestCode);
-        if (isOk) {
-            init();
+        if (mMyPermissionManager != null) {
+            boolean isOk = mMyPermissionManager.onActivityResults(requestCode);
+            if (isOk) {
+                init();
+            }
         }
 
         if (data != null) {
@@ -185,6 +191,21 @@ public class SplashActivity extends BaseActivity {
         if (TextUtils.isEmpty(mRoomName)) {
             Toast.makeText(this, getResources().getString(R.string.ttt_error_enterchannel_check_channel_empty), Toast.LENGTH_SHORT).show();
             return;
+        }
+
+        if (TextUtils.getTrimmedLength(mRoomName) > 19) {
+            Toast.makeText(this, R.string.hint_channel_name_limit, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            long roomId = Long.valueOf(mRoomName);
+            if (roomId <= 0) {
+                Toast.makeText(this, "房间号必须大于0", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "房间号只支持整型字符串", Toast.LENGTH_SHORT).show();
         }
 
         if (mIsLoging) return;
