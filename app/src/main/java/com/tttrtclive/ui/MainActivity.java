@@ -71,7 +71,9 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        mExitRoomDialog.show();
+        if (mExitRoomDialog != null) {
+            mExitRoomDialog.show();
+        }
     }
 
     @Override
@@ -81,7 +83,14 @@ public class MainActivity extends BaseActivity {
             mPhoneListener = null;
             mTelephonyManager = null;
         }
-        unregisterReceiver(mLocalBroadcast);
+
+        if (mLocalBroadcast != null) {
+            try {
+                unregisterReceiver(mLocalBroadcast);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         mTTTEngine.muteLocalAudioStream(false);
         super.onDestroy();
         MyLog.d("MainActivity onDestroy");

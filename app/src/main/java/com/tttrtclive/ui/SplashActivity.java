@@ -104,10 +104,10 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (mMyPermissionManager != null) {
             mMyPermissionManager.clearResource();
         }
-        super.onDestroy();
     }
 
     @Override

@@ -14,6 +14,7 @@ public class VideoProfileManager {
         mVideoProfiles.add(new VideoProfile("高质量", Constants.TTTRTC_VIDEOPROFILE_360P, 640, 360, 400, 15));
         mVideoProfiles.add(new VideoProfile("超高质量", Constants.TTTRTC_VIDEOPROFILE_480P, 640, 480, 500, 15));
         mVideoProfiles.add(new VideoProfile("特高质量", Constants.TTTRTC_VIDEOPROFILE_720P, 1280, 720, 1130, 15));
+        mVideoProfiles.add(new VideoProfile("蓝光质量", Constants.TTTRTC_VIDEOPROFILE_1080P, 1290, 1080, 2080, 15));
     }
 
     public VideoProfile getVideoProfile(String name) {
