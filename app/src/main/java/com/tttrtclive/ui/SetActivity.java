@@ -140,7 +140,7 @@ public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelecte
 
     @Override
     public void onItemSelected(View parent, int position) {
-        if (position != 6) {
+        if (position != 7) {
             mVideoProfile = mVideoProfileManager.mVideoProfiles.get(position);
             mLocalVideoProfile = mVideoProfile.videoProfile;
             mPixView.setText(mVideoProfile.width + "x" + mVideoProfile.height);
