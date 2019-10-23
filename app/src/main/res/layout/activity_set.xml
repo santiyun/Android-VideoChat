@@ -59,7 +59,7 @@
         app:layout_constraintStart_toEndOf="@+id/divider"
         app:layout_constraintTop_toTopOf="@+id/textView2"
         android:background="@drawable/spinner_bg"
-        android:paddingLeft="20dp"
+        android:paddingLeft="12dp"
         android:textSize="16sp"
         android:textColor="#FF666666"
         android:gravity="center_vertical"

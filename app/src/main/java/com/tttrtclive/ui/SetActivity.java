@@ -60,7 +60,8 @@ public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelecte
             mPixView.setText(mWidth + "x" + mHeight);
             mBiteView.setText(mBTate + "");
             mFrameView.setText(mFRate + "");
-            localPixSpinner.setSelectedIndex(5);
+            mPixView.requestFocus();
+            localPixSpinner.setSelectedIndex(mVideoProfileManager.mVideoProfiles.size());
         }
 
         ((Switch) findViewById(R.id.local_audio_switch)).setChecked(mUseHQAudio);
@@ -140,13 +141,13 @@ public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelecte
 
     @Override
     public void onItemSelected(View parent, int position) {
-        if (position != 7) {
+        if (position < mVideoProfileManager.mVideoProfiles.size()) {
             mVideoProfile = mVideoProfileManager.mVideoProfiles.get(position);
             mLocalVideoProfile = mVideoProfile.videoProfile;
             mPixView.setText(mVideoProfile.width + "x" + mVideoProfile.height);
             mBiteView.setText(mVideoProfile.bRate + "");
             mFrameView.setText(mVideoProfile.fRate + "");
-
+            mPixView.requestFocus();
             mPixView.setEnabled(false);
             mBiteView.setEnabled(false);
             mFrameView.setEnabled(false);
