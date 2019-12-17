@@ -208,6 +208,7 @@ public class SplashActivity extends BaseActivity {
         mTTTEngine.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
         // 3.启用视频功能模块
         mTTTEngine.enableVideo();
+        // 4.设置视频编码属性，默认 SDK 使用 360P 质量等级，详情看 SetActivity 里的 setVideoProfile API 接口。
     }
 
     public void onClickEnterButton(View v) {
@@ -240,7 +241,14 @@ public class SplashActivity extends BaseActivity {
 
         // 保存配置
         SharedPreferencesUtil.setParam(this, "RoomID", mRoomName);
-        // 4.加入频道
+
+        // 5.设置音频编码参数，SDK 默认为 ISAC 音频编码格式，32kbps 音频码率，适用于通话；高音质选用 AAC 格式编码，码率设置为96kbps。
+        if (mUseHQAudio) {
+            mTTTEngine.setPreferAudioCodec(Constants.TTT_AUDIO_CODEC_AAC, 96, 1);
+        } else {
+            mTTTEngine.setPreferAudioCodec(Constants.TTT_AUDIO_CODEC_ISAC, 32, 1);
+        }
+        // 6.加入频道
         mTTTEngine.joinChannel("", mRoomName, mUserId);
         mDialog.show();
     }

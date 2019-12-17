@@ -129,7 +129,6 @@ public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelecte
             }
             TTTRtcEngine.getInstance().setVideoProfile(mHeight, mWidth, mFRate, mBTate);
         }
-        TTTRtcEngine.getInstance().setHighQualityAudioParameters(mUseHQAudio);
         exit();
     }
 
