@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -21,7 +20,6 @@ import com.tttrtclive.bean.JniObjs;
 import com.tttrtclive.bean.MyPermissionBean;
 import com.tttrtclive.callback.MyTTTRtcEngineEventHandler;
 import com.tttrtclive.helper.MyPermissionManager;
-import com.tttrtclive.utils.MyLog;
 import com.tttrtclive.utils.SharedPreferencesUtil;
 import com.wushuangtech.library.Constants;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
@@ -34,6 +32,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 public class SplashActivity extends BaseActivity {
+
+    public static final int ACTIVITY_MAIN = 100;
+    public static final int ACTIVITY_SETTING = 101;
 
     private ProgressDialog mDialog;
     private MyLocalBroadcastReceiver mLocalBroadcast;
@@ -108,6 +109,12 @@ public class SplashActivity extends BaseActivity {
         if (mMyPermissionManager != null) {
             mMyPermissionManager.clearResource();
         }
+
+        try {
+            unregisterReceiver(mLocalBroadcast);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -124,20 +131,30 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (mMyPermissionManager != null) {
-            boolean isOk = mMyPermissionManager.onActivityResults(requestCode);
-            if (isOk) {
-                init();
-            }
-        }
-
-        if (data != null) {
-            mLocalVideoProfile = data.getIntExtra("LVP", mLocalVideoProfile);
-            mFRate = data.getIntExtra("FRATE", mFRate);
-            mBTate = data.getIntExtra("BRATE", mBTate);
-            mWidth = data.getIntExtra("WIDTH", mWidth);
-            mHeight = data.getIntExtra("HEIGHT", mHeight);
-            mUseHQAudio = data.getBooleanExtra("HQA", mUseHQAudio);
+        switch (requestCode) {
+            case MyPermissionManager.REQUEST_SETTING_CODE:
+                if (mMyPermissionManager != null) {
+                    boolean isOk = mMyPermissionManager.onActivityResults(requestCode);
+                    if (isOk) {
+                        init();
+                    }
+                }
+                break;
+            case ACTIVITY_MAIN:
+                if (mDialog != null) {
+                    mDialog.dismiss();
+                }
+                break;
+            case ACTIVITY_SETTING:
+                if (data != null) {
+                    mLocalVideoProfile = data.getIntExtra("LVP", mLocalVideoProfile);
+                    mFRate = data.getIntExtra("FRATE", mFRate);
+                    mBTate = data.getIntExtra("BRATE", mBTate);
+                    mWidth = data.getIntExtra("WIDTH", mWidth);
+                    mHeight = data.getIntExtra("HEIGHT", mHeight);
+                    mUseHQAudio = data.getBooleanExtra("HQA", mUseHQAudio);
+                }
+                break;
         }
     }
 
@@ -147,9 +164,15 @@ public class SplashActivity extends BaseActivity {
         String string = getResources().getString(R.string.version_info);
         String result = String.format(string, TTTRtcEngine.getInstance().getSdkVersion());
         mVersion.setText(result);
+
+        mDialog = new ProgressDialog(this);
+        mDialog.setCancelable(false);
+        mDialog.setTitle("");
+        mDialog.setMessage(getResources().getString(R.string.ttt_hint_loading_channel));
     }
 
     private void init() {
+        // 初始化组件
         initView();
         // 读取保存的数据
         String roomID = (String) SharedPreferencesUtil.getParam(this, "RoomID", "");
@@ -159,31 +182,32 @@ public class SplashActivity extends BaseActivity {
         }
         // 注册回调函数接收的广播
         mLocalBroadcast = new MyLocalBroadcastReceiver();
-        mDialog = new ProgressDialog(this);
-        mDialog.setCancelable(false);
-        mDialog.setTitle("");
-        mDialog.setMessage(getResources().getString(R.string.ttt_hint_loading_channel));
-        MyLog.d("SplashActivity onCreate.... model : " + Build.MODEL);
-        // 1.启用视频模块
-        mTTTEngine.enableVideo();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         IntentFilter filter = new IntentFilter();
         filter.addAction(MyTTTRtcEngineEventHandler.TAG);
         registerReceiver(mLocalBroadcast, filter);
+        // 初始化 SDK
+        initSDK();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        try {
-            unregisterReceiver(mLocalBroadcast);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void initSDK() {
+        // 创建 SDK 实例对象，请看 MainApplication 类。
+
+        /*
+         * 1.设置频道模式，SDK 默认就是 CHANNEL_PROFILE_COMMUNICATION(通信) 模式，但是 DEMO 显式的设置用于介绍接口。
+         * 注意:该接口是全局接口，离开频道后状态不会清除，所以在模式需要发生变化时调用即可，无需每次加入频道都设置。
+         */
+        mTTTEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
+        /*
+         * 2.设置角色身份，CHANNEL_PROFILE_COMMUNICATION 模式下可以设置两种角色
+         * CLIENT_ROLE_BROADCASTER(副播) ：可以理解为麦上用户，默认可以说话。
+         * CLIENT_ROLE_AUDIENCE(观众) ：可以理解为听众，默认只听不发。
+         *
+         * SDK 默认是 CLIENT_ROLE_BROADCASTER 角色，但是 DEMO 显式的设置用于介绍接口。
+         * 注意:该接口是全局接口，离开频道后状态不会清除，所以在角色需要发生变化时调用即可，无需每次加入频道都设置。
+         */
+        mTTTEngine.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
+        // 3.启用视频功能模块
+        mTTTEngine.enableVideo();
     }
 
     public void onClickEnterButton(View v) {
@@ -216,7 +240,7 @@ public class SplashActivity extends BaseActivity {
 
         // 保存配置
         SharedPreferencesUtil.setParam(this, "RoomID", mRoomName);
-
+        // 4.加入频道
         mTTTEngine.joinChannel("", mRoomName, mUserId);
         mDialog.show();
     }
@@ -229,7 +253,7 @@ public class SplashActivity extends BaseActivity {
         intent.putExtra("WIDTH", mWidth);
         intent.putExtra("HEIGHT", mHeight);
         intent.putExtra("HQA", mUseHQAudio);
-        startActivityForResult(intent, 1);
+        startActivityForResult(intent, ACTIVITY_SETTING);
     }
 
     private class MyLocalBroadcastReceiver extends BroadcastReceiver {
@@ -246,8 +270,7 @@ public class SplashActivity extends BaseActivity {
                         activityIntent.putExtra("ROOM_ID", Long.parseLong(mRoomName));
                         activityIntent.putExtra("USER_ID", mUserId);
                         activityIntent.setClass(SplashActivity.this, MainActivity.class);
-                        startActivity(activityIntent);
-                        mDialog.dismiss();
+                        startActivityForResult(activityIntent, ACTIVITY_MAIN);
                         mIsLoging = false;
                         break;
                     case LocalConstans.CALL_BACK_ON_ERROR:

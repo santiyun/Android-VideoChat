@@ -26,7 +26,7 @@ public class MyPermissionManager {
 
     private PermissionUtilsInter mPermissionUtilsInter;
     private final int REQUEST_PERMISSION_CODE = 321;
-    private final int REQUEST_SETTING_CODE = 123;
+    public static final int REQUEST_SETTING_CODE = 123;
     private Activity mActivity;
 
     private AlertDialog mTipDialog;

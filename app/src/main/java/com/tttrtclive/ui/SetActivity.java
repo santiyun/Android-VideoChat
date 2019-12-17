@@ -127,7 +127,6 @@ public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelecte
                 Toast.makeText(this, "自定义视频码率必须大于0", Toast.LENGTH_SHORT).show();
                 return ;
             }
-
             TTTRtcEngine.getInstance().setVideoProfile(mHeight, mWidth, mFRate, mBTate);
         }
         TTTRtcEngine.getInstance().setHighQualityAudioParameters(mUseHQAudio);
@@ -173,7 +172,7 @@ public class SetActivity extends BaseActivity implements SoSpinner.OnItemSelecte
         intent.putExtra("WIDTH", mWidth);
         intent.putExtra("HEIGHT", mHeight);
         intent.putExtra("HQA", mUseHQAudio);
-        setResult(1, intent);
+        setResult(SplashActivity.ACTIVITY_SETTING, intent);
         finish();
     }
 
