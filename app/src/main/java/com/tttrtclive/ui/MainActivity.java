@@ -223,7 +223,7 @@ public class MainActivity extends BaseActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (MyTTTRtcEngineEventHandler.TAG.equals(action)) {
-                JniObjs mJniObjs = intent.getParcelableExtra(MyTTTRtcEngineEventHandler.MSG_TAG);
+                JniObjs mJniObjs = (JniObjs) intent.getSerializableExtra(MyTTTRtcEngineEventHandler.MSG_TAG);
                 switch (mJniObjs.mJniType) {
                     case LocalConstans.CALL_BACK_ON_USER_KICK:
                         MyLog.d("UI onReceive CALL_BACK_ON_USER_KICK... ");
@@ -266,19 +266,19 @@ public class MainActivity extends BaseActivity {
                         break;
                     case LocalConstans.CALL_BACK_ON_REMOTE_AUDIO_STATE:
                         String audioString = getResources().getString(R.string.ttt_audio_downspeed);
-                        String audioResult = String.format(audioString, String.valueOf(mJniObjs.mRemoteAudioStats.getReceivedBitrate()));
-                        mRemoteManager.updateAudioBitrate(mJniObjs.mRemoteAudioStats.getUid(), audioResult);
+                        String audioResult = String.format(audioString, String.valueOf(mJniObjs.mAudioRecvBitrate));
+                        mRemoteManager.updateAudioBitrate(mJniObjs.mUid, audioResult);
                         break;
                     case LocalConstans.CALL_BACK_ON_REMOTE_VIDEO_STATE:
                         String videoString = getResources().getString(R.string.ttt_video_downspeed);
-                        String videoResult = String.format(videoString, String.valueOf(mJniObjs.mRemoteVideoStats.getReceivedBitrate()));
-                        mRemoteManager.updateVideoBitrate(mJniObjs.mRemoteVideoStats.getUid(), videoResult);
+                        String videoResult = String.format(videoString, String.valueOf(mJniObjs.mVideoRecvBitrate));
+                        mRemoteManager.updateVideoBitrate(mJniObjs.mUid, videoResult);
                         break;
                     case LocalConstans.CALL_BACK_ON_LOCAL_AUDIO_STATE:
-                        setTextViewContent(mAudioSpeedShow, R.string.ttt_audio_upspeed, String.valueOf(mJniObjs.mLocalAudioStats.getSentBitrate()));
+                        setTextViewContent(mAudioSpeedShow, R.string.ttt_audio_upspeed, String.valueOf(mJniObjs.mAudioSentBitrate));
                         break;
                     case LocalConstans.CALL_BACK_ON_LOCAL_VIDEO_STATE:
-                        setTextViewContent(mVideoSpeedShow, R.string.ttt_video_upspeed, String.valueOf(mJniObjs.mLocalVideoStats.getSentBitrate()));
+                        setTextViewContent(mVideoSpeedShow, R.string.ttt_video_upspeed, String.valueOf(mJniObjs.mVideoSentBitrate));
                         break;
                     case LocalConstans.CALL_BACK_ON_MUTE_AUDIO:
                         long muteUid = mJniObjs.mUid;

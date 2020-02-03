@@ -272,7 +272,8 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     public void onRemoteVideoStats(RemoteVideoStats stats) {
         JniObjs mJniObjs = new JniObjs();
         mJniObjs.mJniType = CALL_BACK_ON_REMOTE_VIDEO_STATE;
-        mJniObjs.mRemoteVideoStats = stats;
+        mJniObjs.mUid = stats.getUid();
+        mJniObjs.mVideoRecvBitrate = stats.getReceivedBitrate();
         if (mIsSaveCallBack) {
             saveCallBack(mJniObjs);
         } else {
@@ -294,7 +295,8 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     public void onRemoteAudioStats(RemoteAudioStats stats) {
         JniObjs mJniObjs = new JniObjs();
         mJniObjs.mJniType = CALL_BACK_ON_REMOTE_AUDIO_STATE;
-        mJniObjs.mRemoteAudioStats = stats;
+        mJniObjs.mUid = stats.getUid();
+        mJniObjs.mAudioRecvBitrate = stats.getReceivedBitrate();
         if (mIsSaveCallBack) {
             saveCallBack(mJniObjs);
         } else {
@@ -316,7 +318,7 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     public void onLocalVideoStats(LocalVideoStats stats) {
         JniObjs mJniObjs = new JniObjs();
         mJniObjs.mJniType = CALL_BACK_ON_LOCAL_VIDEO_STATE;
-        mJniObjs.mLocalVideoStats = stats;
+        mJniObjs.mVideoSentBitrate = stats.getSentBitrate();
         if (mIsSaveCallBack) {
             saveCallBack(mJniObjs);
         } else {
@@ -337,7 +339,7 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     public void onLocalAudioStats(LocalAudioStats stats) {
         JniObjs mJniObjs = new JniObjs();
         mJniObjs.mJniType = CALL_BACK_ON_LOCAL_AUDIO_STATE;
-        mJniObjs.mLocalAudioStats = stats;
+        mJniObjs.mAudioSentBitrate = stats.getSentBitrate();
         if (mIsSaveCallBack) {
             saveCallBack(mJniObjs);
         } else {
@@ -402,7 +404,6 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
         Intent i = new Intent();
         i.setAction(TAG);
         i.putExtra(MSG_TAG, mJniObjs);
-        i.setExtrasClassLoader(JniObjs.class.getClassLoader());
         mContext.sendBroadcast(i);
     }
 
