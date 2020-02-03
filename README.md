@@ -49,16 +49,18 @@
 > java 8.0  
 
 
->Android必要权限:  
+#### 权限要求
+
+>必要权限:  
 **android.permission.RECORD_AUDIO** ---> SDK音频模块需要使用此权限用来访问麦克风，用于获取本地音频数据。  
 **android.permission.INTERNET** ---> SDK的直播和通讯功能，均需要使用网络进行上传。  
 **android.permission.BLUETOOTH** ---> SDK的直播和通讯功能，均需要访问蓝牙权限，保证用户能正常使用蓝牙耳机。  
 **android.permission.BLUETOOTH_ADMIN** ---> 蓝牙权限。  
 **android.permission.MODIFY\_AUDIO\_SETTINGS** ---> SDK的直播和通讯功能，均需要访问音频路由，保证能正常切换听筒，扬声器，耳机等路由切换。  
-**android.permission.ACCESS\_NETWORK\_STATE** ---> SDK的直播和通讯功能，均需要访问网络状态。  
+**android.permission.ACCESS\_NETWORK\_STATE** ---> SDK的直播和通讯功能，均需要访问网络状态。
 
->Android非必要权限:  
-**android.permission.READ\_PHONE\_STATE** ---> SDK音频模块需要使用此权限用来访问麦克风，用于获取本地音频数据。  
+>非必要权限:    
+**android.permission.READ\_PHONE\_STATE** ---> SDK的直播和通讯功能，均需要访问手机通话状态。  
 
 # 常见问题
 1. 由于部分模拟器会存在功能缺失或者性能问题，所以 SDK 不支持模拟器的使用。
