@@ -21,6 +21,16 @@
 		android:background="@drawable/dingbuyinying" />
 
 	<ImageView
+		android:id="@+id/main_btn_switch_camera"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="8dp"
+		android:layout_marginTop="16dp"
+		android:src="@drawable/mainly_btn_camera_selector"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<ImageView
 		android:id="@+id/main_btn_audio_channel"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -30,15 +40,15 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/main_btn_switch_camera" />
 
-	<ImageView
-		android:id="@+id/main_btn_switch_camera"
+	<Button
+		android:id="@+id/main_btn_beautfy_control"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:visibility="gone"
 		android:layout_marginStart="8dp"
-		android:layout_marginTop="16dp"
-		android:src="@drawable/mainly_btn_camera_selector"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent" />
+		android:layout_marginTop="8dp"
+		android:text="打开美颜"
+		app:layout_constraintTop_toBottomOf="@+id/main_btn_audio_channel" />
 
 	<TextView
 		android:id="@+id/main_btn_title"
@@ -105,6 +115,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
+		android:visibility="gone"
 		android:background="@drawable/dibuyinying"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
@@ -116,6 +127,7 @@
 		android:layout_height="wrap_content"
 		android:background="@drawable/dingbuyinying"
 		app:layout_constraintEnd_toEndOf="parent"
+		android:visibility="gone"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="@+id/remote2" />
 
@@ -155,6 +167,7 @@
 	<ImageView
 		android:id="@+id/imageView4"
 		android:layout_width="0dp"
+		android:visibility="gone"
 		android:layout_height="wrap_content"
 		android:background="@drawable/dibuyinying"
 		app:layout_constraintBottom_toBottomOf="@+id/remote2"
@@ -164,6 +177,7 @@
 	<ImageView
 		android:id="@+id/imageView5"
 		android:layout_width="0dp"
+		android:visibility="gone"
 		android:layout_height="wrap_content"
 		android:background="@drawable/dingbuyinying"
 		app:layout_constraintEnd_toEndOf="parent"

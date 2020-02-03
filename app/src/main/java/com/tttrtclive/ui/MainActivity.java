@@ -11,11 +11,12 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.tttrtclive.helper.RemoteManager;
 import com.tttrtclive.LocalConstans;
 import com.tttrtclive.MainApplication;
 import com.tttrtclive.R;
@@ -24,6 +25,7 @@ import com.tttrtclive.bean.JniObjs;
 import com.tttrtclive.callback.MyTTTRtcEngineEventHandler;
 import com.tttrtclive.callback.PhoneListener;
 import com.tttrtclive.dialog.ExitRoomDialog;
+import com.tttrtclive.helper.RemoteManager;
 import com.tttrtclive.utils.MyLog;
 import com.wushuangtech.library.Constants;
 import com.wushuangtech.wstechapi.model.VideoCanvas;
@@ -126,6 +128,8 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.main_btn_switch_camera).setOnClickListener(v -> {
             mTTTEngine.switchCamera();
         });
+        // 测试代码，无需关注
+//        initTestCode();
     }
 
     public void setTextViewContent(TextView textView, int resourceID, String value) {
@@ -189,6 +193,28 @@ public class MainActivity extends BaseActivity {
             mErrorExitDialog.setMessage(msg);//设置显示的内容
             mErrorExitDialog.show();
         }
+    }
+
+    // 测试代码，无需关注
+    private void initTestCode() {
+        Button mBeautfyControl = findViewById(R.id.main_btn_beautfy_control);
+        mBeautfyControl.setVisibility(View.VISIBLE);
+        mBeautfyControl.setTag("closed");
+        mBeautfyControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String openTag = (String) v.getTag();
+                if (openTag.equals("closed")) {
+                    mTTTEngine.setBeautyFaceStatus(true, 0.5f, 0.5f);
+                    v.setTag("opened");
+                    mBeautfyControl.setText("关闭美颜");
+                } else {
+                    mTTTEngine.setBeautyFaceStatus(false, 0.0f, 0.0f);
+                    v.setTag("closed");
+                    mBeautfyControl.setText("打开美颜");
+                }
+            }
+        });
     }
 
     private class MyLocalBroadcastReceiver extends BroadcastReceiver {
@@ -326,5 +352,4 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
-
 }
