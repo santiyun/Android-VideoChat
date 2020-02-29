@@ -48,9 +48,9 @@ public class SplashActivity extends BaseActivity {
     /*-------------------------------配置参数---------------------------------*/
     private int mLocalVideoProfile = Constants.TTTRTC_VIDEOPROFILE_DEFAULT;
     private boolean mUseHQAudio = false;
-    private int mFRate;
-    private int mBTate;
-    private int mWidth, mHeight;
+    private int mFRate = 15;
+    private int mBTate = 400;
+    private int mWidth = 640, mHeight = 360;
     /*-------------------------------配置参数---------------------------------*/
 
     @Override
@@ -208,7 +208,12 @@ public class SplashActivity extends BaseActivity {
         mTTTEngine.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
         // 3.启用视频功能模块
         mTTTEngine.enableVideo();
-        // 4.设置视频编码属性，默认 SDK 使用 360P 质量等级，详情看 SetActivity 里的 setVideoProfile API 接口。
+        // 4.设置视频编码属性，默认 SDK 使用 360P 质量等级。
+        if (mLocalVideoProfile != 0) {
+            mTTTEngine.setVideoProfile(mLocalVideoProfile, false);
+        } else {
+            mTTTEngine.setVideoProfile(mWidth, mHeight, mFRate, mBTate);
+        }
     }
 
     public void onClickEnterButton(View v) {
