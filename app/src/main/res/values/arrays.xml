@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="SoVideoItems">
-        <item>120P</item>
-        <item>180P</item>
-        <item>240P</item>
-        <item>360P</item>
-        <item>480P</item>
-        <item>720P</item>
+	<string-array name="SoVideoItems">
+		<item>120P</item>
+		<item>180P</item>
+		<item>240P</item>
+		<item>360P</item>
+		<item>480P</item>
+		<item>720P</item>
 		<item>1080P</item>
+		<item>640*480</item>
+		<item>960*540</item>
 		<item>自定义(测试)</item>
-    </string-array>
-    <string-array name="SoEncodeItems">
-        <item>H.264</item>
-        <item>H.265</item>
-    </string-array>
-    <string-array name="SoAudioItems">
-        <item>48kHz-单声道</item>
-        <item>44.1kHz-双声道</item>
-    </string-array>
+	</string-array>
 </resources>

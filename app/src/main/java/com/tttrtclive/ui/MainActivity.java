@@ -1,6 +1,7 @@
 package com.tttrtclive.ui;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,14 +12,12 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tttrtclive.LocalConstans;
-import com.tttrtclive.MainApplication;
 import com.tttrtclive.R;
 import com.tttrtclive.bean.EnterUserInfo;
 import com.tttrtclive.bean.JniObjs;
@@ -28,6 +27,7 @@ import com.tttrtclive.dialog.ExitRoomDialog;
 import com.tttrtclive.helper.RemoteManager;
 import com.tttrtclive.utils.MyLog;
 import com.wushuangtech.library.Constants;
+import com.wushuangtech.wstechapi.TTTRtcEngine;
 import com.wushuangtech.wstechapi.model.VideoCanvas;
 
 import androidx.annotation.Nullable;
@@ -35,18 +35,24 @@ import androidx.annotation.Nullable;
 public class MainActivity extends BaseActivity {
 
     private long mUserId;
+    private String roomId;
+    private boolean hqAudio;
+    private int videoLevel, videoWidth, videoHeight, videoFps, videoBitrate;
 
-    private TextView mAudioSpeedShow;
-    private TextView mVideoSpeedShow;
+    private TextView mAudioSpeedShow, mVideoSpeedShow;
     private ImageView mAudioChannel;
+    private ViewGroup mLocalVideoLy;
 
     private ExitRoomDialog mExitRoomDialog;
     private AlertDialog.Builder mErrorExitDialog;
+    private ProgressDialog mJoinDialog;
     private MyLocalBroadcastReceiver mLocalBroadcast;
     private boolean mIsMute = false;
     private boolean mIsHeadset;
     private boolean mIsPhoneComing;
     private boolean mIsSpeaker;
+    private boolean mIsBackground;
+    private boolean needResetLocalVideo;
 
     private RemoteManager mRemoteManager;
     private TelephonyManager mTelephonyManager;
@@ -54,22 +60,42 @@ public class MainActivity extends BaseActivity {
 
     public static int mCurrentAudioRoute;
 
+    private SurfaceView mLocalVideoView;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_videochat);
+        Intent intent = getIntent();
+        roomId = intent.getStringExtra("roomId");
+        mUserId = intent.getLongExtra("uid", 0);
+        hqAudio = intent.getBooleanExtra("audio_hq", false);
+        videoLevel = intent.getIntExtra("videoLevel", Constants.TTTRTC_VIDEOPROFILE_DEFAULT);
+        videoWidth = intent.getIntExtra("videoWidth", 360);
+        videoHeight = intent.getIntExtra("videoHeight", 640);
+        videoFps = intent.getIntExtra("videoFps", 15);
+        videoBitrate = intent.getIntExtra("videoBitrate", 500);
         initView();
         initData();
-        initEngine();
-        initDialog();
-        mTelephonyManager = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
-        mPhoneListener = new PhoneListener(this);
-        if (mTelephonyManager != null) {
-            mTelephonyManager.listen(mPhoneListener, PhoneStateListener.LISTEN_CALL_STATE);
-        }
-        mTTTEngine.enableAudioVolumeIndication(300, 3);
         MyLog.d("MainActivity onCreate");
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mIsBackground = false;
+        if (needResetLocalVideo) {
+            openLocalVideo();
+            needResetLocalVideo = false;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mIsBackground = true;
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -102,20 +128,13 @@ public class MainActivity extends BaseActivity {
         mAudioSpeedShow = findViewById(R.id.main_btn_audioup);
         mVideoSpeedShow = findViewById(R.id.main_btn_videoup);
         mAudioChannel = findViewById(R.id.main_btn_audio_channel);
+        mLocalVideoLy = findViewById(R.id.local_view_layout);
 
-        Intent intent = getIntent();
-        long roomId = intent.getLongExtra("ROOM_ID", 0);
-        mUserId = intent.getLongExtra("USER_ID", 0);
         String localChannelName = getString(R.string.ttt_prefix_channel_name) + ":" + roomId;
         ((TextView) findViewById(R.id.main_btn_title)).setText(localChannelName);
         ((TextView) findViewById(R.id.main_btn_host)).setText("ID：" + mUserId);
 
-        SurfaceView mSurfaceView = mTTTEngine.CreateRendererView(this);
-        mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN, mSurfaceView), getRequestedOrientation());
-        ((ViewGroup) findViewById(R.id.local_view_layout)).addView(mSurfaceView);
-
         findViewById(R.id.main_btn_exit).setOnClickListener((v) -> mExitRoomDialog.show());
-
         mAudioChannel.setOnClickListener(v -> {
             mIsMute = !mIsMute;
             if (mIsHeadset)
@@ -128,25 +147,7 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.main_btn_switch_camera).setOnClickListener(v -> {
             mTTTEngine.switchCamera();
         });
-        // 测试代码，无需关注
-//        initTestCode();
-    }
 
-    public void setTextViewContent(TextView textView, int resourceID, String value) {
-        String string = getResources().getString(resourceID);
-        String result = String.format(string, value);
-        textView.setText(result);
-    }
-
-    private void initEngine() {
-        mLocalBroadcast = new MyLocalBroadcastReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(MyTTTRtcEngineEventHandler.TAG);
-        registerReceiver(mLocalBroadcast, filter);
-        ((MainApplication) getApplicationContext()).mMyTTTRtcEngineEventHandler.setIsSaveCallBack(false);
-    }
-
-    private void initDialog() {
         mExitRoomDialog = new ExitRoomDialog(mContext, R.style.NoBackGroundDialog);
         mExitRoomDialog.setCanceledOnTouchOutside(false);
         mExitRoomDialog.mConfirmBT.setOnClickListener(v -> {
@@ -155,21 +156,104 @@ public class MainActivity extends BaseActivity {
         });
         mExitRoomDialog.mDenyBT.setOnClickListener(v -> mExitRoomDialog.dismiss());
 
-
         mErrorExitDialog = new AlertDialog.Builder(this)
                 .setTitle("退出房间提示")//设置对话框标题
                 .setCancelable(false)
                 .setPositiveButton("确定", (dialog, which) -> {//确定按钮的响应事件
                     exitRoom();
                 });
+
+        mJoinDialog = new ProgressDialog(this);
+        mJoinDialog.setCancelable(false);
+        mJoinDialog.setTitle("");
+        mJoinDialog.setMessage(getResources().getString(R.string.ttt_hint_loading_channel));
+    }
+
+    public void setTextViewContent(TextView textView, int resourceID, String value) {
+        String string = getResources().getString(resourceID);
+        String result = String.format(string, value);
+        textView.setText(result);
     }
 
     private void initData() {
-        mRemoteManager = new RemoteManager(this);
+        mLocalBroadcast = new MyLocalBroadcastReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(MyTTTRtcEngineEventHandler.TAG);
+        registerReceiver(mLocalBroadcast, filter);
 
+        mTelephonyManager = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
+        mPhoneListener = new PhoneListener(this);
+        if (mTelephonyManager != null) {
+            mTelephonyManager.listen(mPhoneListener, PhoneStateListener.LISTEN_CALL_STATE);
+        }
+
+        mRemoteManager = new RemoteManager(this);
         if (mCurrentAudioRoute != Constants.AUDIO_ROUTE_SPEAKER) {
             mIsHeadset = true;
             mAudioChannel.setImageResource(R.drawable.mainly_btn_headset_selector);
+        }
+
+        // 启用视频模块功能
+        mTTTEngine.enableVideo();
+        // 打开本地视频
+        openLocalVideo();
+        // 避免阻塞UI
+        // 开始加入频道
+        new Thread(this::joinChannel).start();
+    }
+
+    private void openLocalVideo() {
+        mLocalVideoView = TTTRtcEngine.CreateRendererView(this);
+        mLocalVideoView.setZOrderMediaOverlay(false);
+        mTTTEngine.enableVideo();
+        mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN, mLocalVideoView), getRequestedOrientation());
+        mTTTEngine.startPreview();
+        runOnUiThread(() -> {
+            mLocalVideoLy.addView(mLocalVideoView);
+        });
+    }
+
+    private void closeLocalVideo() {
+        runOnUiThread(() -> {
+            mLocalVideoLy.removeAllViews();
+        });
+    }
+
+    private void joinChannel() {
+        mTTTEngine.enableMixAudioDataReport(true);
+        // 创建 SDK 实例对象，请看 MainApplication 类。
+        /*
+         * 1.设置频道模式，SDK 默认就是 CHANNEL_PROFILE_COMMUNICATION(通信) 模式，但是 DEMO 显式的设置用于介绍接口。
+         * 注意:该接口是全局接口，离开频道后状态不会清除，所以在模式需要发生变化时调用即可，无需每次加入频道都设置。
+         */
+        mTTTEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
+        /*
+         * 2.设置角色身份，CHANNEL_PROFILE_COMMUNICATION 模式下可以设置两种角色
+         * CLIENT_ROLE_BROADCASTER(副播) ：可以理解为麦上用户，默认可以说话。
+         * CLIENT_ROLE_AUDIENCE(观众) ：可以理解为听众，默认只听不发。
+         *
+         * SDK 默认是 CLIENT_ROLE_BROADCASTER 角色，但是 DEMO 显式的设置用于介绍接口。
+         * 注意:该接口是全局接口，离开频道后状态不会清除，所以在角色需要发生变化时调用即可，无需每次加入频道都设置。
+         */
+        mTTTEngine.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
+        // 4.设置视频编码属性，默认 SDK 使用 360P 质量等级。
+        if (videoLevel != 0) {
+            mTTTEngine.setVideoProfile(videoLevel, false);
+        } else {
+            mTTTEngine.setVideoProfile(videoWidth, videoHeight, videoFps, videoBitrate);
+        }
+        // 5.设置音频编码参数，SDK 默认为 ISAC 音频编码格式，32kbps 音频码率，适用于通话；高音质选用 AAC 格式编码，码率设置为96kbps。
+        if (hqAudio) {
+            mTTTEngine.setPreferAudioCodec(Constants.TTT_AUDIO_CODEC_AAC, 96, 1);
+        } else {
+            mTTTEngine.setPreferAudioCodec(Constants.TTT_AUDIO_CODEC_ISAC, 32, 1);
+        }
+        // 6.启用说话者音量提示，每300毫秒上报一次频道内所有用户的说话音量，每次上报一个用户，会触发多次。第二个参数平滑系数暂未实现。
+        mTTTEngine.enableAudioVolumeIndication(300, 0);
+        // 7.加入频道
+        int join = mTTTEngine.joinChannel("", roomId, mUserId);
+        if (join == 0) {
+            runOnUiThread(() -> mJoinDialog.show());
         }
     }
 
@@ -195,28 +279,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    // 测试代码，无需关注
-    private void initTestCode() {
-        Button mBeautfyControl = findViewById(R.id.main_btn_beautfy_control);
-        mBeautfyControl.setVisibility(View.VISIBLE);
-        mBeautfyControl.setTag("closed");
-        mBeautfyControl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String openTag = (String) v.getTag();
-                if (openTag.equals("closed")) {
-                    mTTTEngine.setBeautyFaceStatus(true, 0.5f, 0.5f);
-                    v.setTag("opened");
-                    mBeautfyControl.setText("关闭美颜");
-                } else {
-                    mTTTEngine.setBeautyFaceStatus(false, 0.0f, 0.0f);
-                    v.setTag("closed");
-                    mBeautfyControl.setText("打开美颜");
-                }
-            }
-        });
-    }
-
     private class MyLocalBroadcastReceiver extends BroadcastReceiver {
 
         @Override
@@ -224,31 +286,59 @@ public class MainActivity extends BaseActivity {
             String action = intent.getAction();
             if (MyTTTRtcEngineEventHandler.TAG.equals(action)) {
                 JniObjs mJniObjs = (JniObjs) intent.getSerializableExtra(MyTTTRtcEngineEventHandler.MSG_TAG);
+                if (mJniObjs == null) {
+                    return;
+                }
                 switch (mJniObjs.mJniType) {
-                    case LocalConstans.CALL_BACK_ON_USER_KICK:
-                        MyLog.d("UI onReceive CALL_BACK_ON_USER_KICK... ");
-                        String message = "";
+                    case LocalConstans.CALL_BACK_ON_ENTER_ROOM: // 加入频道成功的信令
+                        Toast.makeText(mContext, "加入频道成功", Toast.LENGTH_SHORT).show();
+                        mJoinDialog.dismiss();
+                        break;
+                    case LocalConstans.CALL_BACK_ON_ERROR: // 接收加入频道失败的信令，或是sdk运行中出现的错误信令，需要手动调用leaveChannel
+                        String errorMsg = "";
                         int errorType = mJniObjs.mErrorType;
-                        if (errorType == Constants.ERROR_KICK_BY_HOST) {
+                        if (errorType == Constants.ERROR_ENTER_ROOM_INVALIDCHANNELNAME) {
+                            errorMsg = mContext.getResources().getString(R.string.ttt_error_enterchannel_format);
+                        } else if (errorType == Constants.ERROR_ENTER_ROOM_TIMEOUT) {
+                            errorMsg = mContext.getResources().getString(R.string.ttt_error_enterchannel_timeout);
+                        } else if (errorType == Constants.ERROR_ENTER_ROOM_VERIFY_FAILED) {
+                            errorMsg = mContext.getResources().getString(R.string.ttt_error_enterchannel_token_invaild);
+                        } else if (errorType == Constants.ERROR_ENTER_ROOM_BAD_VERSION) {
+                            errorMsg = mContext.getResources().getString(R.string.ttt_error_enterchannel_version);
+                        } else if (errorType == Constants.ERROR_ENTER_ROOM_CONNECT_FAILED) {
+                            errorMsg = mContext.getResources().getString(R.string.ttt_error_enterchannel_unconnect);
+                        } else if (errorType == Constants.ERROR_ENTER_ROOM_NOEXIST) {
+                            errorMsg = mContext.getResources().getString(R.string.ttt_error_enterchannel_room_no_exist);
+                        } else if (errorType == Constants.ERROR_ENTER_ROOM_SERVER_VERIFY_FAILED) {
+                            errorMsg = mContext.getResources().getString(R.string.ttt_error_enterchannel_verification_failed);
+                        } else if (errorType == Constants.ERROR_ENTER_ROOM_UNKNOW) {
+                            errorMsg = mContext.getResources().getString(R.string.ttt_error_enterchannel_unknow);
+                        }
+                        mJoinDialog.dismiss();
+                        showErrorExitDialog(errorMsg);
+                        break;
+                    case LocalConstans.CALL_BACK_ON_USER_KICK: // 接收到服务器下发到异常退出信令，需要手动调用leaveChannel
+                        String message = "";
+                        int kickType = mJniObjs.mErrorType;
+                        if (kickType == Constants.ERROR_KICK_BY_HOST) {
                             message = getResources().getString(R.string.ttt_error_exit_kicked);
-                        } else if (errorType == Constants.ERROR_KICK_BY_PUSHRTMPFAILED) {
+                        } else if (kickType == Constants.ERROR_KICK_BY_PUSHRTMPFAILED) {
                             message = getResources().getString(R.string.ttt_error_exit_push_rtmp_failed);
-                        } else if (errorType == Constants.ERROR_KICK_BY_SERVEROVERLOAD) {
+                        } else if (kickType == Constants.ERROR_KICK_BY_SERVEROVERLOAD) {
                             message = getResources().getString(R.string.ttt_error_exit_server_overload);
-                        } else if (errorType == Constants.ERROR_KICK_BY_MASTER_EXIT) {
+                        } else if (kickType == Constants.ERROR_KICK_BY_MASTER_EXIT) {
                             message = getResources().getString(R.string.ttt_error_exit_anchor_exited);
-                        } else if (errorType == Constants.ERROR_KICK_BY_RELOGIN) {
+                        } else if (kickType == Constants.ERROR_KICK_BY_RELOGIN) {
                             message = getResources().getString(R.string.ttt_error_exit_relogin);
-                        } else if (errorType == Constants.ERROR_KICK_BY_NEWCHAIRENTER) {
+                        } else if (kickType == Constants.ERROR_KICK_BY_NEWCHAIRENTER) {
                             message = getResources().getString(R.string.ttt_error_exit_other_anchor_enter);
-                        } else if (errorType == Constants.ERROR_KICK_BY_NOAUDIODATA) {
+                        } else if (kickType == Constants.ERROR_KICK_BY_NOAUDIODATA) {
                             message = getResources().getString(R.string.ttt_error_exit_noaudio_upload);
-                        } else if (errorType == Constants.ERROR_KICK_BY_NOVIDEODATA) {
+                        } else if (kickType == Constants.ERROR_KICK_BY_NOVIDEODATA) {
                             message = getResources().getString(R.string.ttt_error_exit_novideo_upload);
-                        } else if (errorType == Constants.ERROR_TOKEN_EXPIRED) {
+                        } else if (kickType == Constants.ERROR_TOKEN_EXPIRED) {
                             message = getResources().getString(R.string.ttt_error_exit_token_expired);
                         }
-
                         showErrorExitDialog(message);
                         break;
                     case LocalConstans.CALL_BACK_ON_CONNECTLOST:
@@ -346,6 +436,14 @@ public class MainActivity extends BaseActivity {
                             }
                         } else {
                             mRemoteManager.updateSpeakState(mJniObjs.mUid, mJniObjs.mAudioLevel);
+                        }
+                        break;
+                    case LocalConstans.CALL_BACK_ON_CAMERA_CONNECT_ERROR:
+                        closeLocalVideo();
+                        if (!mIsBackground) {
+                            openLocalVideo();
+                        } else {
+                            needResetLocalVideo = true;
                         }
                         break;
                 }
