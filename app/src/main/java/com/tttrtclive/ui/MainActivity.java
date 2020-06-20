@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +27,7 @@ import com.tttrtclive.dialog.ExitRoomDialog;
 import com.tttrtclive.helper.RemoteManager;
 import com.tttrtclive.utils.MyLog;
 import com.wushuangtech.library.Constants;
+import com.wushuangtech.myvideoimprove.view.VideoRenderView;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 import com.wushuangtech.wstechapi.model.VideoCanvas;
 
@@ -60,7 +61,7 @@ public class MainActivity extends BaseActivity {
 
     public static int mCurrentAudioRoute;
 
-    private SurfaceView mLocalVideoView;
+    private TextureView mLocalVideoView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -203,10 +204,9 @@ public class MainActivity extends BaseActivity {
     }
 
     private void openLocalVideo() {
-        mLocalVideoView = TTTRtcEngine.CreateRendererView(this);
-        mLocalVideoView.setZOrderMediaOverlay(false);
+        mLocalVideoView = TTTRtcEngine.CreateRendererTextureView(this);
         mTTTEngine.enableVideo();
-        mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN, mLocalVideoView), getRequestedOrientation());
+        mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN, (VideoRenderView) mLocalVideoView), getRequestedOrientation());
         mTTTEngine.startPreview();
         runOnUiThread(() -> {
             mLocalVideoLy.addView(mLocalVideoView);

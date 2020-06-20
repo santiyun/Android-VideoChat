@@ -77,12 +77,6 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
         MyLog.i(TAG, "onLeaveChannel...");
     }
 
-    @Override
-    public byte[] onMixedAudioFrame(byte[] data, int size, int sampleRate, int channels) {
-//        MyLog.i(TAG, "onMixedAudioFrame... ");
-        return super.onMixedAudioFrame(data, size, sampleRate, channels);
-    }
-
     /**
      * SDK 发生错误回调。
      * <p/>
